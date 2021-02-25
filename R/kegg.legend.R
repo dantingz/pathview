@@ -1,5 +1,3 @@
-utils::globalVariables("KEGGEdgeSubtype")
-
 kegg.legend=function (type=c("both", "edge", "node")[1]) {
   if(!type %in% c("both", "edge", "node")){
     msg.fmt="type has to be one of: \"%s\", \"%s\" and \"%s\"!"
@@ -7,9 +5,9 @@ kegg.legend=function (type=c("both", "edge", "node")[1]) {
     message("Note: ", msg)
     return(invisible(0))
   }
-#  if (!exists("KEGGEdgeSubtype")) {
-#    data(KEGGEdgeSubtype)
-#  }
+  #  if (!exists("KEGGEdgeSubtype")) {
+  #    data(KEGGEdgeSubtype)
+  #  }
   KEGGEdgeSubtype <- KEGGEdgeSubtype[-7,]
   levels(KEGGEdgeSubtype$name)[13]="others/unknown"
   subtypes <- KEGGEdgeSubtype$name
@@ -21,7 +19,7 @@ kegg.legend=function (type=c("both", "edge", "node")[1]) {
   ltytrans <- c(solid = 1, dashed = 2, dotted = 3)
   ltys <- ltytrans[styles]
   nst=nrow(KEGGEdgeSubtype)
-
+  
   if(type=="edge"){
     top.margin=2
     xlim=c(-0.4,1.8)
@@ -44,7 +42,7 @@ kegg.legend=function (type=c("both", "edge", "node")[1]) {
   }
   opar <- par(mar = c(0, 0, top.margin, 0), mgp = c(0, 0, 0), lwd=2)
   on.exit(par(opar))
-
+  
   plot(1, 1, type = "n", xlim = xlim, ylim = ylim,
        axes = FALSE, xlab = "", ylab = "", main = main.txt)
   if(type %in% c("both","edge")){
@@ -73,11 +71,11 @@ kegg.legend=function (type=c("both", "edge", "node")[1]) {
   
   if(type %in% c("both","node")){
     ntypes=c("gene", "group", "compound", "map")
-    naliases=c("protein/enzyme", "complex", "metabolite/glycan", "pathway")
+    naliases=c("protein/rna", "complex", "metabolite/glycan", "pathway")
     nshapes=c("rectangle", "rectangle group", "ellipse", "plaintext")
     node.types=data.frame(types=ntypes, aliases=naliases, shapes=nshapes, width=rep(46,4), height=rep(17,4))
-
-                                        #  if(!edges.only){
+    
+    #  if(!edges.only){
     ntypes=as.character(node.types$types)
     naliases=as.character(node.types$aliases)
     nlabels=paste(ntypes, "\n(", naliases, ")", sep="")
@@ -94,6 +92,19 @@ kegg.legend=function (type=c("both", "edge", "node")[1]) {
     rect.x2=rep(xs+nwidth,4)
     rect.y1=rep(ys[1:2],c(1,3))-nheight[1:2]*c(1,2,0,2)*6
     rect.y2=rep(ys[1:2],c(1,3))+nheight[1:2]*c(1,2,2,0)*6
+    
+    rect(rect.x1[1],rect.y1[1],(rect.x2[1]-rect.x1[1])/2+rect.x1[1],rect.y2[1])
+    
+    center <- c(mean(c(rect.x1[1], (rect.x2[1]-rect.x1[1])/2+rect.x1[1])), mean(c(rect.y1[1], rect.y2[1])))
+    
+    text(center[1], center[2], labels = 'p')
+    
+    rect((rect.x2[1]-rect.x1[1])/2+rect.x1[1],rect.y1[1],rect.x2[1],rect.y2[1])
+ 
+    center <- c(mean(c((rect.x2[1]-rect.x1[1])/2+rect.x1[1], rect.x2[1])), mean(c(rect.y1[1], rect.y2[1])))
+    
+    text(center[1], center[2], labels = 'r')
+       
     rect(rect.x1,rect.y1,rect.x2,rect.y2)
     ellipses(xs,ys[3],nwidth[3],nheight[3]*6, cols=NULL)
     text(xs, ys[4], "Pathway name", cex = 1.2)
