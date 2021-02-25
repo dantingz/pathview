@@ -1,3 +1,5 @@
+utils::globalVariables("KEGGEdgeSubtype")
+
 kegg.legend=function (type=c("both", "edge", "node")[1]) {
   if(!type %in% c("both", "edge", "node")){
     msg.fmt="type has to be one of: \"%s\", \"%s\" and \"%s\"!"
