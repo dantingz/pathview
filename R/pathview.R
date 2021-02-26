@@ -40,6 +40,19 @@ pathview <-
     #                         sign.pos="bottomright",#g
     ...){
     
+    list.of.packages <- c("AnnotationDbi", "select", "columns", "keys","AnnotationDb","org.Hs.eg.db","png", "readPNG",
+"utils", "data", "installed.packages", "read.delim",
+"XML", "xmlAttrs", "xmlChildren", "xmlName", "xmlRoot", "xmlTreeParse",
+"grDevices", "col2rgb", "dev.off", "pdf", "png", "rgb",
+"graphics", "image", "layout", "par", "polygon", "rasterImage", "rect", "segments", "text",
+"stats", "IQR", "rnorm","KEGGgraph","Rgraphviz","KEGGREST","methods","graph")
+
+new.packages <- list.of.packages[!(list.of.packages %in% installed.packages()[,"Package"])]
+if(length(new.packages)) install.packages(new.packages)
+
+libraries(list.of.packages )
+invisible(lapply(list.of.packages, library, character.only = TRUE))
+    
     #length-2 arguments check
     
     dtypes=!is.null(gene.data)+!is.null(cpd.data)
