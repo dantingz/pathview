@@ -2,7 +2,7 @@ keggview.graph <-function(
   plot.data.gene=NULL,
   plot.data.cpd=NULL,
   rna.after.prot=FALSE,
-  rna.color = c("brown","#DDCC77","orange"),
+  rna.color = c("orange","#DDCC77","brown"),
   cols.ts.gene=NULL,
   cols.ts.cpd=NULL,
   node.data,
@@ -343,9 +343,11 @@ keggview.graph <-function(
     
     ucol.gene=unique(as.vector(cols.ts.gene))
     na.col.gene=ucol.gene %in% c(na.col, NA)
+    
     if(plot.col.key & !is.null(cols.ts.gene) & !all(na.col.gene))  {
-      off.sets=col.key(limit=limit$gene, bins=bins$gene, both.dirs=both.dirs$gene, discrete=discrete$gene, graph.size=pv.pars$gsizes,
-                       node.size=pv.pars$nsizes, key.pos=key.pos, cex=pv.pars$key.cex, lwd=pv.pars$key.lwd, low=low$gene, mid=mid$gene, high=high$gene, align="n")
+      off.sets=col.key(limit=limit$gene, bins=bins$gene, whichkey = "PROT", both.dirs=both.dirs$gene, discrete=discrete$gene, graph.size=pv.pars$gsizes,
+                       node.size=pv.pars$nsizes, key.pos=key.pos, cex=pv.pars$key.cex, lwd=pv.pars$key.lwd, 
+                       low=low$gene, mid=mid$gene, high=high$gene, align="n")
       align=key.align
       
     }
@@ -354,7 +356,7 @@ keggview.graph <-function(
     
     if(plot.col.key & rna.after.prot)  {
       #   message("matching colorkey of rna")
-      off.sets=col.key(limit=limit$gene, bins=bins$gene, both.dirs=both.dirs$gene, discrete=discrete$gene, graph.size=pv.pars$gsizes,
+      off.sets=col.key(limit=limit$gene, bins=bins$gene, whichkey = "RNA", both.dirs=both.dirs$gene, discrete=discrete$gene, graph.size=pv.pars$gsizes,
                        node.size=pv.pars$nsizes, key.pos=key.pos, off.sets=off.sets, cex=pv.pars$key.cex, lwd=pv.pars$key.lwd, 
                        low=rna.color[1], mid=rna.color[2], high=rna.color[3], align=align)
       
@@ -364,8 +366,12 @@ keggview.graph <-function(
     ucol.cpd=unique(as.vector(cols.ts.cpd))
     na.col.cpd=ucol.cpd %in% c(na.col, NA)
     if(plot.col.key & !is.null(cols.ts.cpd) & !all(na.col.cpd)) {
-      off.sets=col.key(limit=limit$cpd, bins=bins$cpd, both.dirs=both.dirs$cpd, discrete=discrete$cpd, graph.size=pv.pars$gsizes, node.size=pv.pars$nsizes, key.pos=key.pos, off.sets=off.sets, cex=pv.pars$key.cex, lwd=pv.pars$key.lwd, low=low$cpd, mid=mid$cpd, high=high$cpd, align=align)
+      #   message("matching colorkey of cpd")
+      off.sets=col.key(limit=limit$cpd, bins=bins$cpd, whichkey = "CPD", both.dirs=both.dirs$cpd, discrete=discrete$cpd, graph.size=pv.pars$gsizes, 
+                       node.size=pv.pars$nsizes, key.pos=key.pos, off.sets=off.sets, cex=pv.pars$key.cex, lwd=pv.pars$key.lwd,
+                       low=low$cpd, mid=mid$cpd, high=high$cpd, align=align)
     }
+    
     
     if(new.signature) pathview.stamp(position=sign.pos, graph.sizes=pv.pars$gsizes, on.kegg=F, cex = pv.pars$sign.cex)
     #  kegg.legend(edges.only=same.layer)
