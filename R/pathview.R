@@ -3,7 +3,8 @@ pathview <-
     gene.data=NULL,
     cpd.data=NULL,
     rna.after.prot=FALSE,
-    rna.color = c("brown","#DDCC77","orange"),
+    rna.color = c("orange","#DDCC77","brown"),
+    rna.prot.place = "bottomright",
     #                         xml.file=NULL,
     pathway.id,
     species = "hsa",
@@ -268,7 +269,7 @@ pathview <-
       
       if(kegg.native){
      #   message(paste("rnaafterprot",rna.after.prot))
-        pv.pars= keggview.native(plot.data.gene=plot.data.gene, rna.after.prot=rna.after.prot, rna.color = rna.color,cols.ts.gene=cols.ts.gene, plot.data.cpd=plot.data.cpd, cols.ts.cpd=cols.ts.cpd, node.data=node.data, pathway.name=pathway.name[i], kegg.dir=kegg.dir, limit=limit, bins=bins, both.dirs=both.dirs,discrete=discrete, low=low, mid=mid, high=high, na.col=na.col, ...)
+        pv.pars= keggview.native(plot.data.gene=plot.data.gene, rna.after.prot=rna.after.prot, rna.prot.place = rna.prot.place, rna.color = rna.color,cols.ts.gene=cols.ts.gene, plot.data.cpd=plot.data.cpd, cols.ts.cpd=cols.ts.cpd, node.data=node.data, pathway.name=pathway.name[i], kegg.dir=kegg.dir, limit=limit, bins=bins, both.dirs=both.dirs,discrete=discrete, low=low, mid=mid, high=high, na.col=na.col, ...)
       } else{
         pv.pars= keggview.graph(plot.data.gene=plot.data.gene, rna.after.prot=rna.after.prot, rna.color = rna.color,cols.ts.gene=cols.ts.gene, plot.data.cpd=plot.data.cpd, cols.ts.cpd=cols.ts.cpd, node.data=node.data, path.graph=gR1, pathway.name=pathway.name[i],  map.cpdname=map.cpdname, split.group=split.group, limit=limit, bins=bins, both.dirs=both.dirs, discrete=discrete, low=low, mid=mid, high=high, na.col=na.col, ...)
       }
