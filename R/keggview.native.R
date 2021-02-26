@@ -3,7 +3,8 @@ keggview.native <-
     plot.data.gene=NULL,
     plot.data.cpd=NULL,
     rna.after.prot=FALSE,
-    rna.color = c("brown","#DDCC77","orange"),
+    rna.color = c("orange","#DDCC77","brown"),
+    rna.prot.place = "bottomright",
     cols.ts.gene=NULL,
     cols.ts.cpd=NULL,
     node.data,
@@ -128,32 +129,147 @@ keggview.native <-
       ucol.gene=unique(as.vector(cols.ts.gene))
       na.col.gene=ucol.gene %in% c(na.col, NA)
       
-      if(plot.col.key & !is.null(cols.ts.gene) & !all(na.col.gene))  {
-        off.sets=col.key(limit=limit$gene, bins=bins$gene, both.dirs=both.dirs$gene, discrete=discrete$gene, graph.size=pv.pars$gsizes,
-                         node.size=pv.pars$nsizes, key.pos=key.pos, cex=pv.pars$key.cex, lwd=pv.pars$key.lwd, 
-                         low=low$gene, mid=mid$gene, high=high$gene, align="n")
+      
+      
+      if(plot.col.key & rna.after.prot)  {
+        #   message("matching colorkey of rna")
+        off.sets=col.key(limit=limit$gene, bins=bins$gene, whichkey = "RNA", both.dirs=both.dirs$gene, discrete=discrete$gene, graph.size=pv.pars$gsizes,
+                         node.size=pv.pars$nsizes, key.pos=key.pos,  cex=pv.pars$key.cex, lwd=pv.pars$key.lwd, 
+                         low=rna.color[1], mid=rna.color[2], high=rna.color[3], align="n")
         align=key.align
+      }
+      
+      
+      if(plot.col.key & !is.null(cols.ts.gene) & !all(na.col.gene))  {
+        off.sets=col.key(limit=limit$gene, bins=bins$gene, whichkey = "PROT", both.dirs=both.dirs$gene, discrete=discrete$gene, graph.size=pv.pars$gsizes,
+                         node.size=pv.pars$nsizes, key.pos=key.pos, off.sets=off.sets, cex=pv.pars$key.cex, lwd=pv.pars$key.lwd, 
+                         low=low$gene, mid=mid$gene, high=high$gene, align=align)
         
       }
       
     #  message(paste("rnaafterprot",rna.after.prot))
       
-      if(plot.col.key & rna.after.prot)  {
+     # if(plot.col.key & rna.after.prot)  {
      #   message("matching colorkey of rna")
-        off.sets=col.key(limit=limit$gene, bins=bins$gene, both.dirs=both.dirs$gene, discrete=discrete$gene, graph.size=pv.pars$gsizes,
-                         node.size=pv.pars$nsizes, key.pos=key.pos, off.sets=off.sets, cex=pv.pars$key.cex, lwd=pv.pars$key.lwd, 
-                         low=rna.color[1], mid=rna.color[2], high=rna.color[3], align=align)
+    #    off.sets=col.key(limit=limit$gene, bins=bins$gene, whichkey = "RNA", both.dirs=both.dirs$gene, discrete=discrete$gene, graph.size=pv.pars$gsizes,
+     #                    node.size=pv.pars$nsizes, key.pos=key.pos, off.sets=off.sets, cex=pv.pars$key.cex, lwd=pv.pars$key.lwd, 
+    #                     low=rna.color[1], mid=rna.color[2], high=rna.color[3], align=align)
         
-      }
+     # }
+      
+      
       
       ucol.cpd=unique(as.vector(cols.ts.cpd))
       na.col.cpd=ucol.cpd %in% c(na.col, NA)
       if(plot.col.key & !is.null(cols.ts.cpd) & !all(na.col.cpd)) {
      #   message("matching colorkey of cpd")
-        off.sets=col.key(limit=limit$cpd, bins=bins$cpd, both.dirs=both.dirs$cpd, discrete=discrete$cpd, graph.size=pv.pars$gsizes, 
+        off.sets=col.key(limit=limit$cpd, bins=bins$cpd, whichkey = "CPD", both.dirs=both.dirs$cpd, discrete=discrete$cpd, graph.size=pv.pars$gsizes, 
                          node.size=pv.pars$nsizes, key.pos=key.pos, off.sets=off.sets, cex=pv.pars$key.cex, lwd=pv.pars$key.lwd,
                          low=low$cpd, mid=mid$cpd, high=high$cpd, align=align)
       }
+      
+      if(rna.after.prot)  {  
+      width=pv.pars$gsizes[1]
+      height=pv.pars$gsizes[2]
+      xs=width/80
+      ys=height/40
+      
+      if (sum(grepl("^-?[0-9.]+$", rna.prot.place) == T) == 2){
+        rect.x1 = rna.prot.place[1]*xs
+        rect.x2 = rect.x1+4*xs
+        rect.y1 = rna.prot.place[2]*ys
+        rect.y2 = rect.y1+ys
+        
+        rect(rect.x1[1],rect.y1[1],(rect.x2[1]-rect.x1[1])/2+rect.x1[1],rect.y2[1],border ="red")
+        
+        center <- c(mean(c(rect.x1[1], (rect.x2[1]-rect.x1[1])/2+rect.x1[1])), mean(c(rect.y1[1], rect.y2[1])))
+        
+        text(center[1], center[2], labels = 'PROT',cex=0.2,col = "red")
+        
+        rect((rect.x2[1]-rect.x1[1])/2+rect.x1[1],rect.y1[1],rect.x2[1],rect.y2[1],border ="red")
+        
+        center <- c(mean(c((rect.x2[1]-rect.x1[1])/2+rect.x1[1], rect.x2[1])), mean(c(rect.y1[1], rect.y2[1])))
+        
+        text(center[1], center[2], labels = 'RNA',cex=0.2,col="red")
+        
+      }else if (rna.prot.place[1] == F){
+        
+      } else if (rna.prot.place[1] == "bottomright"){
+      rect.x1 = 70*xs
+      rect.x2 = rect.x1+4*xs
+      rect.y1 = 7*ys
+      rect.y2 = rect.y1+ys
+      
+      rect(rect.x1[1],rect.y1[1],(rect.x2[1]-rect.x1[1])/2+rect.x1[1],rect.y2[1],border ="red")
+      
+      center <- c(mean(c(rect.x1[1], (rect.x2[1]-rect.x1[1])/2+rect.x1[1])), mean(c(rect.y1[1], rect.y2[1])))
+      
+      text(center[1], center[2], labels = 'PROT',cex=0.2,col = "red")
+      
+      rect((rect.x2[1]-rect.x1[1])/2+rect.x1[1],rect.y1[1],rect.x2[1],rect.y2[1],border ="red")
+      
+      center <- c(mean(c((rect.x2[1]-rect.x1[1])/2+rect.x1[1], rect.x2[1])), mean(c(rect.y1[1], rect.y2[1])))
+      
+      text(center[1], center[2], labels = 'RNA',cex=0.2,col="red")
+      
+      }else if (rna.prot.place[1] == "topright"){
+        rect.x1 = 70*xs
+        rect.x2 = rect.x1+4*xs
+        rect.y1 = 32*ys
+        rect.y2 = rect.y1+ys
+        
+        rect(rect.x1[1],rect.y1[1],(rect.x2[1]-rect.x1[1])/2+rect.x1[1],rect.y2[1],border ="red")
+        
+        center <- c(mean(c(rect.x1[1], (rect.x2[1]-rect.x1[1])/2+rect.x1[1])), mean(c(rect.y1[1], rect.y2[1])))
+        
+        text(center[1], center[2], labels = 'PROT',cex=0.2,col = "red")
+        
+        rect((rect.x2[1]-rect.x1[1])/2+rect.x1[1],rect.y1[1],rect.x2[1],rect.y2[1],border ="red")
+        
+        center <- c(mean(c((rect.x2[1]-rect.x1[1])/2+rect.x1[1], rect.x2[1])), mean(c(rect.y1[1], rect.y2[1])))
+        
+        text(center[1], center[2], labels = 'RNA',cex=0.2,col="red")
+        
+      }else if (rna.prot.place[1] == "bottomleft"){
+        rect.x1 = 8*xs
+        rect.x2 = rect.x1+4*xs
+        rect.y1 = 2*ys
+        rect.y2 = rect.y1+ys
+        
+        rect(rect.x1[1],rect.y1[1],(rect.x2[1]-rect.x1[1])/2+rect.x1[1],rect.y2[1],border ="red")
+        
+        center <- c(mean(c(rect.x1[1], (rect.x2[1]-rect.x1[1])/2+rect.x1[1])), mean(c(rect.y1[1], rect.y2[1])))
+        
+        text(center[1], center[2], labels = 'PROT',cex=0.2,col = "red")
+        
+        rect((rect.x2[1]-rect.x1[1])/2+rect.x1[1],rect.y1[1],rect.x2[1],rect.y2[1],border ="red")
+        
+        center <- c(mean(c((rect.x2[1]-rect.x1[1])/2+rect.x1[1], rect.x2[1])), mean(c(rect.y1[1], rect.y2[1])))
+        
+        text(center[1], center[2], labels = 'RNA',cex=0.2,col="red")
+        
+      }else if (rna.prot.place[1] == "topleft"){
+        rect.x1 = 8*xs
+        rect.x2 = rect.x1+4*xs
+        rect.y1 = 38*ys
+        rect.y2 = rect.y1+ys
+        
+        rect(rect.x1[1],rect.y1[1],(rect.x2[1]-rect.x1[1])/2+rect.x1[1],rect.y2[1],border ="red")
+        
+        center <- c(mean(c(rect.x1[1], (rect.x2[1]-rect.x1[1])/2+rect.x1[1])), mean(c(rect.y1[1], rect.y2[1])))
+        
+        text(center[1], center[2], labels = 'PROT',cex=0.2,col = "red")
+        
+        rect((rect.x2[1]-rect.x1[1])/2+rect.x1[1],rect.y1[1],rect.x2[1],rect.y2[1],border ="red")
+        
+        center <- c(mean(c((rect.x2[1]-rect.x1[1])/2+rect.x1[1], rect.x2[1])), mean(c(rect.y1[1], rect.y2[1])))
+        
+        text(center[1], center[2], labels = 'RNA',cex=0.2,col="red")
+        
+      }
+      
+    }
+      
       
       if(new.signature) pathview.stamp(x=17, y=20, on.kegg=T, cex = pv.pars$sign.cex)
       par(pv.pars$op)
