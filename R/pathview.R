@@ -50,7 +50,7 @@ pathview <-
 new.packages <- list.of.packages[!(list.of.packages %in% installed.packages()[,"Package"])]
 if(length(new.packages)) install.packages(new.packages)
 
-libraries(list.of.packages )
+#libraries(list.of.packages )
 invisible(lapply(list.of.packages, library, character.only = TRUE))
     
     #length-2 arguments check
